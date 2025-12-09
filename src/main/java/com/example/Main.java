@@ -1,5 +1,6 @@
 package com.example;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -7,6 +8,8 @@ import java.util.Scanner;
 public class Main {
 
     private final Scanner scanner = new Scanner(System.in);
+    private AccountRepository accountRepository;
+    private DataSource dataSource;
 
     static void main(String[] args) {
         if (isDevMode(args)) {
@@ -28,17 +31,99 @@ public class Main {
         }
 
         // Creates a DataSource once at startup
-        DataSource dataSource = new SimpleDriverManagerDataSource(jdbcUrl, dbUser, dbPass);
+        dataSource = new SimpleDriverManagerDataSource(jdbcUrl, dbUser, dbPass);
 
         // Creates and injects repositories with DataSource
+        accountRepository = new JdbcAccountRepository(dataSource);
 
+        if (login()) {
+            menu();
+        }
 
+        scanner.close();
     }
 
+    private void menu (){
+        String number = scanner.nextLine();
 
+        boolean isInMenu = true;
+        while (isInMenu) {
+            switch (number) {
+                case "1" -> System.out.println("test");// listMoonMissions();
+                case "2" -> System.out.println("test");// getMissionById();
+                case "3" -> System.out.println("test");// countMissionsByYear();
+                case "4" -> System.out.println("test");// createAccount();
+                case "5" -> updatePassword();
+                case "6" -> deleteAccount();
+                case "0" -> isInMenu = false;
+                default -> System.out.println("Choose a number between 0 and 6.");
+            }
+        }
+    }
 
+    private boolean login (){
+        try {
+            System.out.println("Enter username:");
+            String username = scanner.nextLine();
 
+            System.out.println("Enter password:");
+            String password = scanner.nextLine();
 
+            boolean isLoginValid = accountRepository.isLoginValid(username, password);
+
+            if (isLoginValid) {
+                System.out.println("Login Successful!");
+            }
+            else {
+                System.out.println("Invalid username or password");
+            }
+            return isLoginValid;
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private void updatePassword() {
+        try {
+            System.out.println("Enter id of the account you want to update the password:");
+            long id = Long.parseLong(scanner.nextLine());
+
+            System.out.println("Enter password:");
+            String password = scanner.nextLine();
+
+            // Update the password
+            boolean isUpdated = accountRepository.updatePassword(id, password);
+
+            if (isUpdated) {
+                System.out.println("Password updated successfully!");
+            }
+            else {
+                System.out.println("Password could not be updated!");
+            }
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Please enter valid id and password.");
+        }
+    }
+
+    private void deleteAccount() {
+        try {
+            System.out.println("Enter id of the account you want to delete:");
+            long id = Long.parseLong(scanner.nextLine());
+
+            boolean isDeleted = accountRepository.deleteAccount(id);
+
+            if(isDeleted) {
+                System.out.println("Account deleted successfully!");
+            } else {
+                System.out.println("Account could not be deleted!");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid id.");
+        }
+    }
 
 
 
