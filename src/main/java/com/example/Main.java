@@ -1,11 +1,12 @@
 package com.example;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Main {
+
+    private final Scanner scanner = new Scanner(System.in);
 
     static void main(String[] args) {
         if (isDevMode(args)) {
@@ -26,12 +27,30 @@ public class Main {
                             "as system properties (-Dkey=value) or environment variables.");
         }
 
-        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUser, dbPass)) {
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        //Todo: Starting point for your code
+        // Creates a DataSource once at startup
+        DataSource dataSource = new SimpleDriverManagerDataSource(jdbcUrl, dbUser, dbPass);
+
+        // Creates and injects repositories with DataSource
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Determines if the application is running in development mode based on system properties,
