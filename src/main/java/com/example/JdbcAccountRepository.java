@@ -40,6 +40,10 @@ public class JdbcAccountRepository implements AccountRepository{
 
     @Override
     public boolean updatePassword(long id, String password) {
+        if (password == null) {
+            throw new IllegalArgumentException("Password cannot be null");
+        }
+
         String query = "update account set password = ? where user_id = ?";
 
         try(Connection connection = dataSource.getConnection();
@@ -49,7 +53,7 @@ public class JdbcAccountRepository implements AccountRepository{
             statement.setLong(2, id);
 
             int updated = statement.executeUpdate();
-            // Return true if account created, else false
+            // Return true if password updated, else false
             return updated > 0;
 
         } catch (SQLException e) {
@@ -67,7 +71,7 @@ public class JdbcAccountRepository implements AccountRepository{
             statement.setLong(1, id);
             int update = statement.executeUpdate();
 
-            // Return true if account created, else false
+            // Return true if account deleted, else false
             return update > 0;
 
         } catch (SQLException e) {
@@ -77,6 +81,10 @@ public class JdbcAccountRepository implements AccountRepository{
 
     @Override
     public boolean isLoginValid(String username, String password) {
+        if (username == null || password == null) {
+            throw new IllegalArgumentException("Username and password cannot be null");
+        }
+
         String query = "select count(*) from account where name = ? and password = ?";
 
         try (Connection connection = dataSource.getConnection();

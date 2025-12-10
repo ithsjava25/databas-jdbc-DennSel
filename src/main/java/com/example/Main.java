@@ -45,8 +45,16 @@ public class Main {
     private void menu (){
         boolean isInMenu = true;
         while (isInMenu) {
+            System.out.println("1. List moon missions");
+            System.out.println("2. Get mission by ID");
+            System.out.println("3. Count missions by year");
+            System.out.println("4. Create account");
+            System.out.println("5. Update password");
+            System.out.println("6. Delete account");
+            System.out.println("0. Exit");
+            System.out.print("Choose an option: ");
+
             String number = scanner.nextLine();
-            System.out.println("scanner menu");
             switch (number) {
                 case "1" -> listMoonMissions();
                 case "2" -> getMissionById();
@@ -156,7 +164,7 @@ public class Main {
                 System.out.println("Account could not be created.");
             }
         }
-        catch (NumberFormatException e) {
+        catch (RuntimeException e) {
             System.out.println("Please enter valid values.");
         }
     }
@@ -195,8 +203,9 @@ public class Main {
 
     public void countMissionsByYear() {
         try {
+            System.out.println("Enter year:");
             int year = Integer.parseInt(scanner.nextLine());
-            System.out.println(year + " had " + moonMissionRepository.countMissionsByYear(year) + "missions");
+            System.out.println(year + " had " + moonMissionRepository.countMissionsByYear(year) + " missions");
         } catch (NumberFormatException e){
             System.out.println("Please enter a valid year.");
         }
