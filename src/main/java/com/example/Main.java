@@ -45,6 +45,7 @@ public class Main {
 
     private void menu (){
         String number = scanner.nextLine();
+        System.out.println("scanner menu");
 
         boolean isInMenu = true;
         while (isInMenu) {
@@ -52,7 +53,7 @@ public class Main {
                 case "1" -> System.out.println("test");// listMoonMissions();
                 case "2" -> System.out.println("test");// getMissionById();
                 case "3" -> System.out.println("test");// countMissionsByYear();
-                case "4" -> System.out.println("test");// createAccount();
+                case "4" -> createAccount();
                 case "5" -> updatePassword();
                 case "6" -> deleteAccount();
                 case "0" -> isInMenu = false;
@@ -61,13 +62,17 @@ public class Main {
         }
     }
 
+    // ######### ACCOUNT RELATED ###########
+
     private boolean login (){
         try {
             System.out.println("Enter username:");
             String username = scanner.nextLine();
 
+
             System.out.println("Enter password:");
             String password = scanner.nextLine();
+
 
             boolean isLoginValid = accountRepository.isLoginValid(username, password);
 
@@ -124,6 +129,42 @@ public class Main {
             System.out.println("Please enter a valid id.");
         }
     }
+
+    private void createAccount () {
+        try {
+            System.out.println("Enter first name:");
+            String firstName = scanner.nextLine();
+
+
+            System.out.println("Enter last name:");
+            String lastName = scanner.nextLine();
+
+
+            System.out.println("Enter ssn (xxxxxx-xxxx):");
+            String ssn = scanner.nextLine();
+
+
+            System.out.println("Enter password:");
+            String password = scanner.nextLine();
+
+
+            // Create the account
+            boolean isUpdated = accountRepository.createAccount(firstName, lastName, ssn, password);
+
+            if (isUpdated) {
+                System.out.println("Account created.");
+            }
+            else {
+                System.out.println("Account could not be created.");
+            }
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Please enter valid values.");
+        }
+    }
+
+    // ######### MOON MISSION RELATED ###########
+
 
 
 

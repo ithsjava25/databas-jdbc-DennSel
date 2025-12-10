@@ -15,7 +15,9 @@ public class JdbcAccountRepository implements AccountRepository{
 
     @Override
     public boolean createAccount(String firstName, String lastName, String ssn, String password) {
-        String query = "insert into account (first_name, last_name, ssn, password) values (?, ?, ?, ?, ?)";
+        String query = "insert into account (first_name, last_name, ssn, password, name) values (?, ?, ?, ?, ?)";
+
+        // Create username with first 3 of firstname and lastname
         String username = nameSubstring(firstName) + nameSubstring(lastName);
 
         try(Connection connection = dataSource.getConnection();
@@ -93,6 +95,9 @@ public class JdbcAccountRepository implements AccountRepository{
             throw new RuntimeException(e);
         }
     }
+
+
+    /* ############ EXTRA ############## */
 
     public String nameSubstring (String name) {
         // Length of 3 or name length if shorter than 3
