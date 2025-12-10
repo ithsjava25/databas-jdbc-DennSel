@@ -172,8 +172,7 @@ public class Main {
     // ######### MOON MISSION RELATED ###########
 
     public void listMoonMissions() {
-        List<String> spaceCraftNames = new ArrayList<>(moonMissionRepository.spacecraftNames());
-        spaceCraftNames.forEach(System.out::println);
+        moonMissionRepository.spacecraftNames().forEach(System.out::println);
     }
 
     public void getMissionById() {
