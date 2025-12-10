@@ -84,13 +84,12 @@ public class JdbcAccountRepository implements AccountRepository{
 
             statement.setString(1, username);
             statement.setString(2, password);
-            ResultSet rs = statement.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
+            try(ResultSet rs = statement.executeQuery()){
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
             }
-            return false;
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

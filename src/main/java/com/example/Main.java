@@ -1,15 +1,13 @@
 package com.example;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
     private final Scanner scanner = new Scanner(System.in);
     private AccountRepository accountRepository;
-    private DataSource dataSource;
+    private MoonMissionRepository moonMissionRepository;
 
     static void main(String[] args) {
         if (isDevMode(args)) {
@@ -31,10 +29,11 @@ public class Main {
         }
 
         // Creates a DataSource once at startup
-        dataSource = new SimpleDriverManagerDataSource(jdbcUrl, dbUser, dbPass);
+        DataSource dataSource = new SimpleDriverManagerDataSource(jdbcUrl, dbUser, dbPass);
 
         // Creates and injects repositories with DataSource
         accountRepository = new JdbcAccountRepository(dataSource);
+        moonMissionRepository = new JdbcMoonMissionRepository(dataSource);
 
         if (login()) {
             menu();
@@ -44,15 +43,14 @@ public class Main {
     }
 
     private void menu (){
-        String number = scanner.nextLine();
-        System.out.println("scanner menu");
-
         boolean isInMenu = true;
         while (isInMenu) {
+            String number = scanner.nextLine();
+            System.out.println("scanner menu");
             switch (number) {
-                case "1" -> System.out.println("test");// listMoonMissions();
-                case "2" -> System.out.println("test");// getMissionById();
-                case "3" -> System.out.println("test");// countMissionsByYear();
+                case "1" -> listMoonMissions();
+                case "2" -> getMissionById();
+                case "3" -> countMissionsByYear();
                 case "4" -> createAccount();
                 case "5" -> updatePassword();
                 case "6" -> deleteAccount();
@@ -165,8 +163,44 @@ public class Main {
 
     // ######### MOON MISSION RELATED ###########
 
+    public void listMoonMissions() {
+        List<String> spaceCraftNames = new ArrayList<>(moonMissionRepository.spacecraftNames());
+        spaceCraftNames.forEach(System.out::println);
+    }
 
+    public void getMissionById() {
+        try {
+            System.out.println("Enter id of the mission:");
 
+            long id = Long.parseLong(scanner.nextLine());
+
+            // Optional to be able to use isPresent
+            Optional<MoonMissionObj> moonMissionObj = moonMissionRepository.findMoonMission(id);
+            if (moonMissionObj.isPresent()) {
+                System.out.println(moonMissionObj.get().spacecraft());
+                System.out.println(moonMissionObj.get().launchDate());
+                System.out.println(moonMissionObj.get().carrierRocket());
+                System.out.println(moonMissionObj.get().operator());
+                System.out.println(moonMissionObj.get().missionId());
+                System.out.println(moonMissionObj.get().outcome());
+
+            }
+            else {
+                System.out.println("Mission not found!");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid id.");
+        }
+    }
+
+    public void countMissionsByYear() {
+        try {
+            int year = Integer.parseInt(scanner.nextLine());
+            System.out.println(year + " had " + moonMissionRepository.countMissionsByYear(year) + "missions");
+        } catch (NumberFormatException e){
+            System.out.println("Please enter a valid year.");
+        }
+    }
 
 
 
